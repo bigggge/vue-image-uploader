@@ -1,5 +1,7 @@
 <template>
-  <div class="img-inputer" ref="inputer">
+  <div class="img-inputer"
+       @drop="handleDrop"
+       ref="inputer">
 
     <!--没有图片显示点击上传-->
     <p class="img-inputer-placeholder" v-if="!hasImages">{{placeholder}}</p>
@@ -89,17 +91,35 @@
       }
     },
     mounted () {
+
       // 防止多个组件之间干扰
-      this.inputId = this.id || Math.round(Math.random() * 100000)
+      this.inputId = this.id || Math.round(Math.random() * 100000);
+
+      ['drop', 'dragenter', 'dragover', 'dragleave'].forEach((eventName) => {
+        this.preventDefaultEvent(eventName);
+      });
     },
     methods: {
+      handleFileChange(){
+        let inputDOM = this.$refs.input
+        let files = inputDOM.files
+        this.handleFile(files)
+      },
+      handleDrop (e) {
+        // 获取文件列表
+        let files = e.dataTransfer.files
+        this.handleFile(files)
+      },
+      preventDefaultEvent(eventName){
+        document.addEventListener(eventName, function (e) {
+          e.preventDefault();
+        }, false)
+      },
       openInput(){
         document.getElementById(this.inputId).click()
       },
       // 处理图片
-      handleFileChange (e) {
-        let inputDOM = this.$refs.input
-        let files = inputDOM.files
+      handleFile (files) {
 
         if (files && files.length > 0) {
           this.fileNameList.length = 0
@@ -177,11 +197,11 @@
     /*width: 100%;*/
     white-space: nowrap;
     overflow: hidden;
-    overflow-x: auto; /* 1 */
+    overflow-x: auto;
     -webkit-backface-visibility: hidden;
     -webkit-perspective: 1000;
-    -webkit-overflow-scrolling: touch; /* 2 */
-    text-align: justify; /* 3 */
+    -webkit-overflow-scrolling: touch;
+    text-align: center;
   }
 
   .img-inputer-preview {

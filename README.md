@@ -1,6 +1,6 @@
 # vue-image-uploader
 
-Vue2 图片多选上传组件
+Vue2 图片选择上传组件,支持多选和拖放
 
 [DEMO](http://haoduoyu.cc/vue-image-uploader/)
 
