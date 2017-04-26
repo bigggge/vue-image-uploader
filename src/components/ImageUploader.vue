@@ -1,29 +1,30 @@
 <template>
-  <div class="img-inputer"
+  <div class="img-uploader"
        @drop="handleDrop"
-       ref="inputer">
+       ref="uploader">
 
     <!--没有图片显示点击上传-->
-    <p class="img-inputer-placeholder" v-if="!hasImages">{{placeholder}}</p>
+    <p class="img-uploader-placeholder" v-if="!hasImages">{{placeholder}}</p>
 
     <!--图片预览列表-->
-    <div v-if="hasImages" @click='openInput()' class="img-inputer-preview-list">
-      <div v-for="(data,index) in imageDataList" class="img-inputer-preview">
+    <div v-if="hasImages" @click='openInput()' class="img-uploader-preview-list">
+      <div v-for="(data,index) in imageDataList" class="img-uploader-preview">
 
         <div class="preview-img">
           <img :src="data">
         </div>
         <!--信息窗-->
-        <div class="img-inputer-mask" v-if="hasImages">
-          <p class="img-inputer-file-name">{{fileNameList[index]}}</p>
+        <div class="img-uploader-mask" v-if="hasImages">
+          <!--<p class="img-uploader-file-size">10MB</p>-->
+          <p class="img-uploader-file-name">{{fileNameList[index]}}</p>
         </div>
       </div>
     </div>
 
 
-    <label :for="inputId" class="img-inputer-label" v-if="!hasImages"></label>
+    <label :for="inputId" class="img-uploader-label" v-if="!hasImages"></label>
 
-    <!-- input主体-->
+    <!-- input-->
     <input
       style="display: none"
       :id="inputId"
@@ -33,9 +34,11 @@
       multiple="multiple"
       @change="handleFileChange"/>
 
-    <div class="img-inputer-error" v-if="errorText.length">{{errorText}}</div>
+    <!--错误提示-->
+    <div class="img-uploader-error" v-if="errorText.length">{{errorText}}</div>
 
-    <div class="img-inputer-count" v-if="countText.length">{{countText}}</div>
+    <!--文件数-->
+    <div class="img-uploader-count" v-if="countText.length">{{countText}}</div>
 
   </div>
 </template>
@@ -91,7 +94,6 @@
       }
     },
     mounted () {
-
       // 防止多个组件之间干扰
       this.inputId = this.id || Math.round(Math.random() * 100000);
 
@@ -101,8 +103,8 @@
     },
     methods: {
       handleFileChange(){
-        let inputDOM = this.$refs.input
-        let files = inputDOM.files
+        let input = this.$refs.input
+        let files = input.files
         this.handleFile(files)
       },
       handleDrop (e) {
@@ -139,8 +141,10 @@
         if (files && files.length > 0) {
           this.countText = `${files.length}张图片`
         }
-        // 文件选择回调
-        this.onChange && this.onChange(files)
+        // 文件选择事件
+//        this.onChange && this.onChange(files)
+        this.$emit('onChange', files)
+
         this.preview(files)
       },
       // 预览图片
@@ -167,7 +171,7 @@
 
 <style scoped>
 
-  .img-inputer {
+  .img-uploader {
     position: relative;
     display: inline-block;
     min-width: 260px;
@@ -176,10 +180,9 @@
     width: auto;
     border-radius: 5px;
     background: #ebebeb;
-
   }
 
-  .img-inputer-placeholder {
+  .img-uploader-placeholder {
     margin: 0;
     position: absolute;
     font-size: 15px;
@@ -190,10 +193,9 @@
     transform: translate(0%, -50%);
   }
 
-  .img-inputer-preview-list {
+  .img-uploader-preview-list {
     margin: 5px 10px;
     height: calc(150px + 18px * 2);
-
     /*width: 100%;*/
     white-space: nowrap;
     overflow: hidden;
@@ -204,33 +206,31 @@
     text-align: center;
   }
 
-  .img-inputer-preview {
+  .img-uploader-preview {
     display: inline-block;
     z-index: 2;
     min-height: 150px;
     margin: 10px;
     border-radius: 10px;
-    /*overflow: hidden;*/
     background: #333;
-    /*box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.1), 0 5px 5px 0 rgba(0, 0, 0, 0.2);*/
     transition: 0.3s cubic-bezier(0.3, 0, 0.2, 1);
   }
 
-  .img-inputer-preview:hover {
+  .img-uploader-preview:hover {
     transform: scale(1.02);
   }
 
-  .img-inputer-preview:hover .img-inputer-mask {
+  .img-uploader-preview:hover .img-uploader-mask {
     display: block;
   }
 
-  .img-inputer-preview .preview-img {
+  .img-uploader-preview .preview-img {
     width: 150px;
     height: 150px;
     overflow: hidden;
   }
 
-  .img-inputer-label {
+  .img-uploader-label {
     position: absolute;
     top: 0;
     left: 0;
@@ -240,7 +240,7 @@
     margin-bottom: 0;
   }
 
-  .img-inputer-mask {
+  .img-uploader-mask {
     display: none;
     position: absolute;
     bottom: 0;
@@ -250,9 +250,9 @@
     background: rgba(0, 0, 0, 0.6);
   }
 
-  .img-inputer-file-name {
+  .img-uploader-file-name {
     color: white;
-    font-size: 10px;
+    font-size: 5px;
     padding-top: 10px;
     margin: 0;
     display: inline-block;
@@ -262,7 +262,7 @@
     overflow: hidden;
   }
 
-  .img-inputer-error {
+  .img-uploader-error {
     color: #e55;
     font-size: 12px;
     position: absolute;
@@ -270,7 +270,7 @@
     width: 100%;
   }
 
-  .img-inputer-count {
+  .img-uploader-count {
     color: #573e51;
     font-size: 12px;
     position: absolute;

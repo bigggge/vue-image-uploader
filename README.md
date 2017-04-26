@@ -12,7 +12,12 @@ Vue2 图片选择上传组件,支持多选和拖放
 |------- |--------| ------|-------|
 | maxSize|Number| 单张图片最大大小|3072|
 | placeholder|String| 占位文字|点击上传图片|
-| onChange|Function| 文件更改回调(参数:files)|
+
+### Events
+
+| 参数 |  说明 | 
+|------- |--------| 
+| onChange|文件更改时触发事件|
 
 ### Example
 

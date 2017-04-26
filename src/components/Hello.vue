@@ -1,11 +1,11 @@
 <template>
   <div class="hello">
-    <image-inputer :onChange="imgChange" :maxSize="maxSize" placeholder="选择或拖放图片"></image-inputer>
+    <image-uploader @onChange='imgChange' :maxSize="maxSize" placeholder="选择或拖放图片"></image-uploader>
   </div>
 </template>
 
 <script>
-  import ImageInputer from '@/components/ImageInputer.vue'
+  import ImageUploader from '@/components/ImageUploader.vue'
 
   export default {
     name: 'hello',
@@ -15,7 +15,7 @@
       }
     },
     components: {
-      ImageInputer
+      ImageUploader
     },
     methods: {
       imgChange (files) {
