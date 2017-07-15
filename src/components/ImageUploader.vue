@@ -7,17 +7,18 @@
     <p class="img-uploader-placeholder" v-if="!hasImages">{{placeholder}}</p>
 
     <!--图片预览列表-->
-    <div v-if="hasImages" @click='openInput()' class="img-uploader-preview-list">
+    <div v-if="hasImages" class="img-uploader-preview-list">
       <div v-for="(data,index) in imageDataList" class="img-uploader-preview">
 
         <div class="preview-img">
-          <img :src="data">
+          <img :src="data"/>
         </div>
         <!--信息窗-->
         <div class="img-uploader-mask" v-if="hasImages">
           <!--<p class="img-uploader-file-size">10MB</p>-->
-          <p class="img-uploader-file-name">{{fileNameList[index]}}</p>
+          <p class="img-uploader-file-name" @click='openInput()'>{{fileNameList[index]}}</p>
         </div>
+        <img src="../assets/round_close.svg" class="img-uploader-delete-btn" @click="deleteImg(index)"/>
       </div>
     </div>
 
@@ -44,7 +45,7 @@
 </template>
 
 <script>
-  import resizeImage from '@/components/resize'
+  import resizeImage from '@/components/resize';
 
   export default {
     props: {
@@ -75,26 +76,26 @@
         errorText: '',
         // 图片计数
         countText: ''
-      }
+      };
     },
     computed: {
       // 是否有图片
       hasImages () {
-        return this.imageDataList.length > 0
+        return this.imageDataList.length > 0;
       },
       // 格式化的文件大小，可读的
       sizeFormatted () {
-        let result = 0
+        let result = 0;
         if (this.maxSize < 1024) {
-          result = this.maxSize + 'K'
+          result = this.maxSize + 'K';
         } else {
-          result = (this.maxSize / 1024).toFixed(this.maxSize % 1024 > 0 ? 2 : 0) + 'M'
+          result = (this.maxSize / 1024).toFixed(this.maxSize % 1024 > 0 ? 2 : 0) + 'M';
         }
-        return result
+        return result;
       }
     },
     mounted () {
-      // 防止多个组件之间干扰
+      // 防止多个组件互相影响
       this.inputId = this.id || Math.round(Math.random() * 100000);
 
       ['drop', 'dragenter', 'dragover', 'dragleave'].forEach((eventName) => {
@@ -103,70 +104,74 @@
     },
     methods: {
       handleFileChange(){
-        let input = this.$refs.input
-        let files = input.files
-        this.handleFile(files)
+        let input = this.$refs.input;
+        let files = input.files;
+        this.handleFile(files);
       },
       handleDrop (e) {
         // 获取文件列表
-        let files = e.dataTransfer.files
-        this.handleFile(files)
+        let files = e.dataTransfer.files;
+        this.handleFile(files);
       },
       preventDefaultEvent(eventName){
         document.addEventListener(eventName, function (e) {
           e.preventDefault();
-        }, false)
+        }, false);
       },
       openInput(){
-        document.getElementById(this.inputId).click()
+        document.getElementById(this.inputId).click();
+      },
+      deleteImg(index){
+        this.imageDataList.splice(index, 1);
+        this.countText = `${this.imageDataList.length}张图片`;
       },
       // 处理图片
       handleFile (files) {
 
         if (files && files.length > 0) {
-          this.fileNameList.length = 0
-          this.imageDataList.length = 0
+          this.fileNameList.length = 0;
+          this.imageDataList.length = 0;
         }
 
         for (let i = 0; i < files.length; i++) {
-          let file = files[i]
-          let size = Math.floor(file.size / 1024)
+          let file = files[i];
+          let size = Math.floor(file.size / 1024);
           if (size > this.maxSize) {
-            this.errorText = `文件大小不能超过${this.sizeFormatted}`
-            return false
+            this.errorText = `文件大小不能超过${this.sizeFormatted}`;
+            return false;
           }
-          this.fileNameList.push(file.name)
+          this.fileNameList.push(file.name);
         }
 
         if (files && files.length > 0) {
-          this.countText = `${files.length}张图片`
+          this.countText = `${files.length}张图片`;
         }
         // 文件选择事件
 //        this.onChange && this.onChange(files)
-        this.$emit('onChange', files)
+        this.$emit('onChange', files);
 
-        this.preview(files)
+        this.preview(files);
       },
       // 预览图片
       preview (files) {
-        let _this = this
-        if (!files || !window.FileReader) return
+        let _this = this;
+        if (!files || !window.FileReader) return;
 
         for (let i = 0; i < files.length; i++) {
-          let file = files[i]
-          let reader = new FileReader()
+          let file = files[i];
+          let reader = new FileReader();
           reader.onload = function (e) {
 
             resizeImage(e.target.result, 150, 150, function (result) {
-              _this.imageDataList.push(result)
-            })
+              _this.imageDataList.push(result);
+            });
 
-          }
-          reader.readAsDataURL(file)
+          };
+          reader.readAsDataURL(file);
         }
       }
     }
-  }
+  };
 </script>
 
 <style scoped>
@@ -224,6 +229,10 @@
     display: block;
   }
 
+  .img-uploader-preview:hover .img-uploader-delete-btn {
+    display: block;
+  }
+
   .img-uploader-preview .preview-img {
     width: 150px;
     height: 150px;
@@ -250,6 +259,16 @@
     background: rgba(0, 0, 0, 0.6);
   }
 
+  .img-uploader-delete-btn {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 5px;
+    width: 25px;
+    height: 25px;
+  }
+
   .img-uploader-file-name {
     color: white;
     font-size: 5px;
@@ -260,6 +279,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    cursor: pointer;
   }
 
   .img-uploader-error {
