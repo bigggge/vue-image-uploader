@@ -1,7 +1,5 @@
 # vue-image-uploader
 
-[![](https://badge.juejin.im/entry/59696f0251882548e5719f9b/likes.svg?style=flat-square)](https://juejin.im/entry/59696f0251882548e5719f9b/detail)
-
 Vue2 图片选择上传组件,支持多选和拖放
 
 [DEMO](http://haoduoyu.cc/vue-image-uploader/)
