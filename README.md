@@ -25,7 +25,7 @@ HTML:
 
 ```
   <div class="hello">
-    <image-inputer :onChange="imgChange" :maxSize="maxSize" placeholder="选择图片"></image-inputer>
+    <image-inputer @onChange="imgChange" :maxSize="maxSize" placeholder="选择图片"></image-inputer>
   </div>
 ```
 
